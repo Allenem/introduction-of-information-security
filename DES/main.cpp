@@ -1,6 +1,10 @@
 #include <bits/stdc++.h>
+#define MAX_LINE 1024
+#define PATH "./txt/"
 using namespace std;
 string k;
+char encodee[2000];
+char decodee[2000];
 struct node
 {
     int c[80];
@@ -245,18 +249,18 @@ int DES_encode_decode(string m,int choice)
     ** 功能：实现DES算法的16轮加密
     */
     int ip[80] = {0};
-    // 初始变换ip
+    // STEP1.初始变换ip
     for(int i = 1; i <= 64; i++)
         ip[i] = two[pc_ip[i]];
 
-    // 初始化得到 l[0],r[0]
+    // STEP2.初始化得到 l[0],r[0]
     node l_r[20];
     for(int i = 1; i <= 32; i++)              // 得到l;
         l_r[0].l[i] = ip[i];
     for(int i=1,j = 33; j <= 64; i++,j++)     // 得到r;
         l_r[0].r[i]=ip[j];
 
-    // 进行16轮运算
+    // STEP3.进行16轮运算
     // choice=0时是加密操作
     if(choice==0)
     {
@@ -283,14 +287,14 @@ int DES_encode_decode(string m,int choice)
         }
     }
 
-    // 16轮后左右合在一起
+    // STEP4.16轮后左右合在一起
     int R16L16[80] = {0};
     for(int i = 1; i <= 32; i++)
         R16L16[i] = l_r[16].r[i];
     for(int i = 33, j = 1; j <= 32; j++,i++)
         R16L16[i] = l_r[16].l[j];
 
-    // 进行ip逆置换，得到最终变换;
+    // STEP5.进行ip逆置换，得到最终变换;
     int encode[80] = {0};
     for(int i = 1; i <= 64; i++)
         encode[i] = R16L16[pc_ip_1[i]];
@@ -298,6 +302,7 @@ int DES_encode_decode(string m,int choice)
     //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
     int tem_num;
+    int tem_char;
     // choice=0时是加密操作
     if(choice==0)
     {
@@ -306,8 +311,16 @@ int DES_encode_decode(string m,int choice)
         {
             tem_num = encode[i]*8+encode[i+1]*4+encode[i+2]*2+encode[i+3]*1;
             if(tem_num >= 10)
+            {
+                tem_char = (tem_num-10)+'A';
                 printf("%c",(tem_num-10)+'A');
-            else printf("%c",tem_num+'0');
+            }
+            else
+            {
+                tem_char = tem_num+'0';
+                printf("%c",tem_num+'0');
+            }
+            strcat(encodee,(char*)&tem_char); // 加密字符拼接到一起
         }
     }
     // choice=1时是解密操作
@@ -326,8 +339,8 @@ int DES_encode_decode(string m,int choice)
             decode += change[i];
             decode *= 16;
             decode += change[i+1];
-            //printf("%d %d\n",change[i],change[i+1]);
             printf("%c",decode);
+            strcat(decodee,(char*)&decode); // 解密字符拼接到一起
             decode = 0;
         }
     }
@@ -338,19 +351,27 @@ int main()
 {
     while(1)
     {
-        cout<<"************************************************************"<<endl;
-        cout<<"*                                                          *"<<endl;
-        cout<<"*                     DES加密解密                          *"<<endl;
-        cout<<"*                                                          *"<<endl;
-        cout<<"*                     加密请输入1                          *"<<endl;
-        cout<<"*                     解密请输入2                          *"<<endl;
-        cout<<"*                     退出请输入3                          *"<<endl;
-        cout<<"*                                         copyright: 蒲尧  *"<<endl;
-        cout<<"************************************************************"<<endl;
+        cout<<"+----------------------------------------------------------+"<<endl;
+        cout<<"|                                                          |"<<endl;
+        cout<<"|                     DES加密解密                          |"<<endl;
+        cout<<"|                                                          |"<<endl;
+        cout<<"|              字符串加密    请输入1                       |"<<endl;
+        cout<<"|              字符串解密    请输入2                       |"<<endl;
+        cout<<"|              文件加密      请输入3                       |"<<endl;
+        cout<<"|              文件解密      请输入4                       |"<<endl;
+        cout<<"|              退出          请输入其他任意键              |"<<endl;
+        cout<<"|                                                          |"<<endl;
+        cout<<"|                                         copyright: 蒲尧  |"<<endl;
+        cout<<"+----------------------------------------------------------+"<<endl;
         printf("\n");
         cout<<"STEP1.请输入选项："<<endl;
         int choice;
         cin>>choice;
+
+        // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+        // 1.实现字符串加密
+
         if(choice==1)
         {
             k="";
@@ -407,6 +428,11 @@ int main()
             }
             printf("\n\n");
         }
+
+        // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+        // 2.实现字符串+密钥 解密
+
         else if(choice==2)
         {
             getchar();
@@ -419,7 +445,7 @@ int main()
             int len = strlen(hex);
             int sum = 0;
             string m = "";
-            for(int i = 0; i<len; i++) //每64位加密一次；
+            for(int i = 0; i<len; i++) //每64位解密一次；
             {
                 sum++;
                 m += hex[i];
@@ -432,6 +458,174 @@ int main()
             }
             printf("\n\n");
         }
+
+        // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+        // 3.实现读取文本+文本加密+写入文本
+
+        else if(choice==3)
+        {
+            memset(encodee,'\0',sizeof(encodee));
+            memset(decodee,'\0',sizeof(decodee));
+            k = "C7392539914812E3";                       // 固定密钥，方便下面解密
+            char ifn[10];                                 // 读文件名
+            char ofn[10];                                 // 写文件名
+            char PathAndName[128] = {0};
+
+            // ——————————————
+            // 读取文件部分
+            cout<<"STEP2.请输入需要加密的文件名:"<<endl;  // message.txt
+            cin>>ifn;
+            sprintf(PathAndName,PATH"%s",ifn);
+            char buf[MAX_LINE];                           // 缓冲区
+            FILE *fp;                                     // 文件指针
+            int leng;                                     //行字符个数
+            if((fp = fopen(PathAndName,"r")) == NULL)
+            {
+                perror("fail to read");
+                exit (1) ;
+            }
+            while(fgets(buf,MAX_LINE,fp) != NULL)
+            {
+                leng = strlen(buf);
+                buf[leng-1] = '\0';                       //去掉换行符
+                printf("%s %s \n%s %d \n","明文：",buf,"长度：",leng - 1);
+            }
+            // ——————————————
+
+            // ——————————————
+            // 加密部分
+            cout<<"密文为:"<<endl;
+            int len = strlen(buf),idx = 0;
+            char hex[2000],tem[1000];
+            int now = 0;
+            // 文本转16进制
+            for(int i = 0; i < len; i++)
+            {
+                while(buf[i])
+                {
+                    if(buf[i]%16 >= 10) tem[++idx] = ((buf[i]%16)-10)+'A';
+                    else tem[++idx] = (buf[i]%16)+'0';
+                    buf[i] /= 16;
+                }
+                //倒序存入
+                for(int j = idx; j >= 1; j--)
+                    hex[++now]=tem[j];
+                idx = 0;
+            }
+            // 不够16位补0；
+            while(now%16)
+            {
+                ++now;
+                hex[now] = '0';
+            }
+            int sum = 0;
+            string m = "";
+            for(int i = 1; i <= now; i++)
+            {
+                sum++;
+                m += hex[i];
+                // 每64位加密一次
+                if(sum==16)
+                {
+                    sum=0;
+                    DES_encode_decode(m,0);
+                    m="";
+                }
+            }
+            cout<<"\n写入密文为:\n"<<encodee<<endl; // 这里是将之前一个一个的字符集拼接成一个字符串了
+            PathAndName[128] = {0};
+            // ——————————————
+
+            // ——————————————
+            // 写入文件部分
+            cout<<"\nSTEP3.请输入加密后想要的文件名:"<<endl;  // encode.txt
+            cin>>ofn;
+            sprintf(PathAndName,PATH"%s",ofn);
+            FILE *fp2=fopen(PathAndName,"w");
+            fprintf(fp2,encodee);
+            fclose(fp2);
+            cout<<"写入完成"<<endl;
+            PathAndName[128] = {0};
+            // ——————————————
+
+            printf("\n\n");
+        }
+
+        // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+        // 4.实现读取文本+文本解密+写入文本
+
+        else if(choice==4)
+        {
+            memset(encodee,'\0',sizeof(encodee));         // 置空，也可以 bzero(a,sizeof(a))
+            memset(decodee,'\0',sizeof(decodee));
+            k = "C7392539914812E3";                       // 固定密钥解密
+            char ifn[10];                                 // 读文件名
+            char ofn[10];                                 // 写文件名
+            char PathAndName[128] = {0};
+
+            // ——————————————
+            // 读取文件部分
+            cout<<"STEP2.请输入需要解密的文件名:"<<endl;  // encode.txt
+            cin>>ifn;
+            sprintf(PathAndName,PATH"%s",ifn);
+            char buf[MAX_LINE];                           // 缓冲区
+            FILE *fp;                                     // 文件指针
+            int leng;                                     //行字符个数
+            if((fp = fopen(PathAndName,"r")) == NULL)
+            {
+                perror("fail to read");
+                exit (1) ;
+            }
+            while(fgets(buf,MAX_LINE,fp) != NULL)
+            {
+                leng = strlen(buf);
+                //buf[leng-1] = '\0';                       //去掉换行符
+                printf("%s %s \n%s %d \n","密文：",buf,"长度：",leng - 1);
+            }
+            // ——————————————
+
+            // ——————————————
+            // 解密部分
+            cout<<"明文为:"<<endl;
+            int len = strlen(buf);
+            int sum = 0;
+            string m = "";
+            for(int i = 0; i<len; i++) //每64位解密一次；
+            {
+                sum++;
+                m += buf[i];
+                if(sum==16)
+                {
+                    sum=0;
+                    DES_encode_decode(m,1);
+                    m="";
+                }
+            }
+            PathAndName[128] = {0};
+            cout<<"\n写入解码明文为:\n"<<decodee<<endl; // 这里是将之前一个一个的字符集拼接成一个字符串了
+            // ——————————————
+
+            // ——————————————
+            // 写入文件部分
+            cout<<"\nSTEP3.请输入解密后想要的文件名:"<<endl;  // decode.txt
+            cin>>ofn;
+            sprintf(PathAndName,PATH"%s",ofn);
+            FILE *fp2=fopen(PathAndName,"w");
+            fprintf(fp2,decodee);
+            fclose(fp2);
+            cout<<"写入完成"<<endl;
+            PathAndName[128] = {0};
+            // ——————————————
+
+            printf("\n\n");
+        }
+
+        // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+        // 其他任意键，退出
+
         else
             return 0;
     }
