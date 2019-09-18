@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>DES Encryption Decryption</title>
+	<style>
+		body{
+			margin: 0 auto;
+			text-align: center;
+		}
+		label,textarea,input{
+			font-size: 18px;
+		}
+		textarea{
+			width: 50vw;
+			height: 25vh;
+		}
+		input[type="button"]{
+			width: 100px;
+			height: 30px;
+			cursor: pointer;
+		}
+	</style>
+	<script src="js/rollups/tripledes.js"></script>
+	<script src="js/components/mode-ecb.js"></script>
+	<script>
+		//DES 解密 加密
+		const encryptByDES = (message, key) => {
+			let keyHex = CryptoJS.enc.Utf8.parse(key);
+			let encrypted = CryptoJS.DES.encrypt(
+				message, 
+				keyHex, 
+				{
+					mode: CryptoJS.mode.ECB,
+					padding: CryptoJS.pad.Pkcs7
+				}
+			);
+			return encrypted.toString();
+		}
+		//DES 解密
+		const decryptByDES = (ciphertext, key) => {
+			let keyHex = CryptoJS.enc.Utf8.parse(key);
+			let decrypted = CryptoJS.DES.decrypt(
+				{
+					ciphertext: CryptoJS.enc.Base64.parse(ciphertext)
+				}, 
+				keyHex, 
+				{
+					mode: CryptoJS.mode.ECB,
+					padding: CryptoJS.pad.Pkcs7
+				}
+			);
+			return decrypted.toString(CryptoJS.enc.Utf8);
+		}
+		//加密
+		const encryptStr = () => {
+			let key = document.getElementById('key').value;
+			let message = document.getElementById('text1').value;
+			document.getElementById('text2').value = encryptByDES(message, key);
+		}
+		//解密
+		const decryptStr = () => {
+			let key = document.getElementById('key').value;
+			let ciphertext = document.getElementById('text2').value;
+			document.getElementById('text3').value = decryptByDES(ciphertext, key);
+		}
+	</script>
+</head>
+<body>
+	<h1>JS实现DES加密解密</h1>
+	<label>key</label>
+	<input type="text" value='12345678' id="key" /><br><br>
+	<div>
+		<textarea id="text1" placeholder="请输入需要加密的字符"></textarea><br>
+		<input type="button" value="加密" onclick="encryptStr();"/><br>
+		<textarea id="text2" placeholder="这里显示加密后的字符"></textarea><br>
+		<input type="button" value="解密" onclick="decryptStr();"/><br>
+		<textarea id="text3" placeholder="这里显示解密后的字符"></textarea>
+	</div>
+</body>
+</html>
