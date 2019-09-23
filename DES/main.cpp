@@ -389,6 +389,8 @@ int main()
             cout<<"生成成功,密钥为:\n"<<k<<endl;
 
             cout<<"密文为:"<<endl;
+            clock_t a,b;   // 时间类型变量
+            a = clock();   // 开始时间
             int len = strlen(plaintext),idx = 0;
             char hex[2000],tem[1000];
             int now = 0;
@@ -426,7 +428,8 @@ int main()
                     m="";
                 }
             }
-            printf("\n\n");
+            b = clock();   // 结束时间
+            cout<<"\n加密耗时"<<b-a<<"ms\n"<<endl;
         }
 
         // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -441,6 +444,8 @@ int main()
             gets(hex);
             cout<<"STEP3.请输入密钥:"<<endl;
             cin>>k;
+            clock_t a,b;
+            a = clock();
             cout<<"明文为:"<<endl;
             int len = strlen(hex);
             int sum = 0;
@@ -456,7 +461,8 @@ int main()
                     m="";
                 }
             }
-            printf("\n\n");
+            b = clock();
+            cout<<"\n解密耗时"<<b-a<<"ms\n"<<endl;
         }
 
         // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -471,15 +477,17 @@ int main()
             char ifn[10];                                 // 读文件名
             char ofn[10];                                 // 写文件名
             char PathAndName[128] = {0};
+            clock_t a,b;
 
             // ——————————————
             // 读取文件部分
             cout<<"STEP2.请输入需要加密的文件名:"<<endl;  // message.txt
             cin>>ifn;
+            a = clock();
             sprintf(PathAndName,PATH"%s",ifn);
             char buf[MAX_LINE];                           // 缓冲区
             FILE *fp;                                     // 文件指针
-            int leng;                                     //行字符个数
+            int leng;                                     // 行字符个数
             if((fp = fopen(PathAndName,"r")) == NULL)
             {
                 perror("fail to read");
@@ -491,11 +499,14 @@ int main()
                 buf[leng-1] = '\0';                       //去掉换行符
                 printf("%s %s \n%s %d \n","明文：",buf,"长度：",leng - 1);
             }
+            b = clock();
+            cout<<"读取文件耗时"<<b-a<<"ms\n"<<endl;
             // ——————————————
 
             // ——————————————
             // 加密部分
             cout<<"密文为:"<<endl;
+            a = clock();
             int len = strlen(buf),idx = 0;
             char hex[2000],tem[1000];
             int now = 0;
@@ -535,21 +546,23 @@ int main()
             }
             cout<<"\n写入密文为:\n"<<encodee<<endl; // 这里是将之前一个一个的字符集拼接成一个字符串了
             PathAndName[128] = {0};
+            b = clock();
+            cout<<"加密耗时"<<b-a<<"ms\n"<<endl;
             // ——————————————
 
             // ——————————————
             // 写入文件部分
-            cout<<"\nSTEP3.请输入加密后想要的文件名:"<<endl;  // encode.txt
+            cout<<"STEP3.请输入加密后想要的文件名:"<<endl;  // encode.txt
             cin>>ofn;
+            a = clock();
             sprintf(PathAndName,PATH"%s",ofn);
             FILE *fp2=fopen(PathAndName,"w");
             fprintf(fp2,encodee);
             fclose(fp2);
             cout<<"写入完成"<<endl;
             PathAndName[128] = {0};
-            // ——————————————
-
-            printf("\n\n");
+            b = clock();
+            cout<<"写入文件耗时"<<b-a<<"ms\n"<<endl;
         }
 
         // ————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -564,15 +577,17 @@ int main()
             char ifn[10];                                 // 读文件名
             char ofn[10];                                 // 写文件名
             char PathAndName[128] = {0};
+            clock_t a,b;
 
             // ——————————————
             // 读取文件部分
             cout<<"STEP2.请输入需要解密的文件名:"<<endl;  // encode.txt
             cin>>ifn;
+            a = clock();
             sprintf(PathAndName,PATH"%s",ifn);
             char buf[MAX_LINE];                           // 缓冲区
             FILE *fp;                                     // 文件指针
-            int leng;                                     //行字符个数
+            int leng;                                     // 行字符个数
             if((fp = fopen(PathAndName,"r")) == NULL)
             {
                 perror("fail to read");
@@ -584,11 +599,14 @@ int main()
                 //buf[leng-1] = '\0';                       //去掉换行符
                 printf("%s %s \n%s %d \n","密文：",buf,"长度：",leng - 1);
             }
+            b = clock();
+            cout<<"读取文件耗时"<<b-a<<"ms\n"<<endl;
             // ——————————————
 
             // ——————————————
             // 解密部分
             cout<<"明文为:"<<endl;
+            a = clock();
             int len = strlen(buf);
             int sum = 0;
             string m = "";
@@ -605,21 +623,23 @@ int main()
             }
             PathAndName[128] = {0};
             cout<<"\n写入解码明文为:\n"<<decodee<<endl; // 这里是将之前一个一个的字符集拼接成一个字符串了
+            b = clock();
+            cout<<"解密耗时"<<b-a<<"ms\n"<<endl;
             // ——————————————
 
             // ——————————————
             // 写入文件部分
-            cout<<"\nSTEP3.请输入解密后想要的文件名:"<<endl;  // decode.txt
+            cout<<"STEP3.请输入解密后想要的文件名:"<<endl;  // decode.txt
             cin>>ofn;
+            a = clock();
             sprintf(PathAndName,PATH"%s",ofn);
             FILE *fp2=fopen(PathAndName,"w");
             fprintf(fp2,decodee);
             fclose(fp2);
             cout<<"写入完成"<<endl;
             PathAndName[128] = {0};
-            // ——————————————
-
-            printf("\n\n");
+            b = clock();
+            cout<<"写入文件耗时"<<b-a<<"ms\n"<<endl;
         }
 
         // ————————————————————————————————————————————————————————————————————————————————————————————————————————————

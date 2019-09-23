@@ -234,7 +234,7 @@ int DES_encode_decode(string m,int choice)
 
 ### terminal
 
-![EDS](img/EDS.png)
+![DES](img/DES.png)
 
 ### txt
 
