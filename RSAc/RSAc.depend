@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1569199742 source:d:\1puyao\全栈工程师\0github\introduction-of-information-security\rsac\rsa.cpp
+	"rsa.h"
+
+1569199324 d:\1puyao\全栈工程师\0github\introduction-of-information-security\rsac\rsa.h
+	<stdio.h>
+
