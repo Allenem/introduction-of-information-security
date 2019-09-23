@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 #include<cmath>
 #define MAXLENGTH 500      // 明文最大长度，即所允许的最大整数个数
 

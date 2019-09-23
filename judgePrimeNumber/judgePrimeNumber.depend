@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1569166033 source:d:\1puyao\全栈工程师\0github\introduction-of-information-security\judgeprimenumber\main.cpp
+	<iostream>
+	<time.h>
+	<stdlib.h>
+
