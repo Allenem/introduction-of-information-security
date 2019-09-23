@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1569236011 source:d:\1puyao\全栈工程师\0github\introduction-of-information-security\deslwj\main.c
+	"stdio.h"
+	"memory.h"
+	"time.h"
+	"stdlib.h"
+
